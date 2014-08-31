@@ -1,25 +1,20 @@
 
-# Socket.IO Chat
+# Football Application
 
-A simple chat demo for socket.io
+A Football Data Visualization Application
 
 ## How to use
 
 ```
-$ cd socket.io
 $ npm install
-$ cd examples/chat
-$ npm install
-$ node .
+$ node index.js
 ```
 
-And point your browser to `http://localhost:3000`. Optionally specify
-a port by supplying the `PORT` env variable.
+ point your browser to `http://localhost:3000`.
 
 ## Features
 
-- Multiple users can join a chat room by entering a unique username
-on website load.
-- Users can type chat messages to the chat room
-- A notification is sent to all users when a user joins or leaves
-the chatroom
+- Find correlations between wins and offense/defense
+- Find correlations between wins and salary cap.
+- Visualize individual player salaries in easy to use format. 
+- All data is web scrapped and live. 
