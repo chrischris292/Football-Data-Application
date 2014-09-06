@@ -146,12 +146,11 @@ app.get('/teamStats', function(req, res){
             }
             totalData.push(result);
             console.log(y)
-            if(y==2012)
+            if(y==2013)
             returnJSON();
             else
             {
               y++;
-              console.log(y)
               scrapeThat();
 
             }
