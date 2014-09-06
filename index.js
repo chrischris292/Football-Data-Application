@@ -17,7 +17,7 @@ app.use(express.static(__dirname + '/public'));
 //my own stuff
 
 
-app.get('/searching', function(req, res){
+app.get('/salaries', function(req, res){
       var namez = [];
       var positionz = [];
         scraperjs.StaticScraper.create('http://www.spotrac.com/nfl/seattle-seahawks/cash/')
@@ -54,4 +54,108 @@ app.get('/searching', function(req, res){
               res.send(asJSON)
             })
   });
+app.get('/teamStats', function(req, res){
+  function teamObject(name, win, loss, tie, percentage,pf,pa){
+    this.name = name;
+    this.win = win;
+    this.loss = loss;
+    this.tie = tie;
+    this.percentage = percentage;
+    this.pf = pf;
+    this.pa = pa;
+  }
+  function returnJSON()
+  {
+    res.send(JSON.stringify(totalData))
+  }
+  var teamName =  [];
+  var wins = [];
+  var loses = [];
+  var ties = [];
+  var pct = [];
+  var pf = [];
+  var pa = [];
+  var totalData = [];
+  var y = 2000;
+  function scrapeThat(){
+        scraperjs.StaticScraper.create('http://www.nfl.com/standings?category=league&season='+y+'-REG&split=Overall')
+            .scrape(function($) {
+                return $(".tbdy1").map(function() {
+                    teamName = $(this).find("a").text();
+                    teamName = teamName.replace("\n\t\t\t\t\t\t","")
+                    teamName = teamName.replace("\n\t\t\t\t\t\t","") //serialize stupid nfl.com bs
+                    return teamName;
+                }).get();
+            }, function(names) {
+              teamName = names;
+              //res.send(names)
+            })
+            .scrape(function($) {
+                return $(".tbdy1").map(function() {
+                    var temp = $(this).find(">:first-child").next("td").next("td").next("td").text();
+                    return temp;
+                }).get();
+            }, function(result) {
+                wins = result;
+            })
+            .scrape(function($) {
+                return $(".tbdy1").map(function() {
+                    var temp = $(this).find(">:first-child").next("td").next("td").next("td").next("td").text();
+                    return temp;
+                }).get();
+            }, function(result) {
+                loses = result;
+            })
+            .scrape(function($) {
+                return $(".tbdy1").map(function() {
+                    var temp = $(this).find(">:first-child").next("td").next("td").next("td").next("td").next("td").text();
+                    return temp;
+                }).get();
+            }, function(result) {
+                ties = result;
+            })
+            .scrape(function($) {
+                return $(".tbdy1").map(function() {
+                    var temp = $(this).find(">:first-child").next("td").next("td").next("td").next("td").next("td").next("td").text();
+                    return temp;
+                }).get();
+            }, function(result) {
+                pct = result;
+            })
+            .scrape(function($) {
+                return $(".tbdy1").map(function() {
+                    var temp = $(this).find(">:first-child").next("td").next("td").next("td").next("td").next("td").next("td").next("td").text();
+                    return temp;
+                }).get();
+            }, function(result) {
+                pf = result;
+            })
+             .scrape(function($) {
+                return $(".tbdy1").map(function() {
+                    var temp = $(this).find(">:first-child").next("td").next("td").next("td").next("td").next("td").next("td").next("td").next("td").text();
+                    return temp;
+                }).get();
+            }, function(result) {
+            pa = result;
+            var result = [];
+            result.push(y);
+            for(i=0;i<teamName.length;i++)
+            {
+              var temp = new teamObject(teamName[i],wins[i],loses[i],ties[i],pct[i],pf[i],pa[i])
+              result.push(temp);
+            }
+            totalData.push(result);
+            console.log(y)
+            if(y==2012)
+            returnJSON();
+            else
+            {
+              y++;
+              console.log(y)
+              scrapeThat();
 
+            }
+        })
+  }
+  scrapeThat();
+})
